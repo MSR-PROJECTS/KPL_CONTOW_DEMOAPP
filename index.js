@@ -3,7 +3,6 @@ const sequelize = require('./models/sequelize');
 const BigCommerceOrdersPayloadData = require('./models/bigCommerceOrdersPayloadData');
 const BigCommerceOrdersPayload = require('./models/bigCommerceOrdersPayload');
 const { TBLBIGCOMMERCEORDERSDATA, TBLBIGCOMMERCEORDERSDETAILS } = require('./models/bigCommerceOrdersModel');
-const fetch = require('node-fetch');
 
 exports.handler = async function (event, context) {
     let body;
@@ -115,7 +114,6 @@ const handlePost = async (data) => {
     }
 };
 
-
 const postBigCommerceOrdersData = async (requestJSON) => {
     const transaction = await sequelize.transaction();
     try {
@@ -134,7 +132,8 @@ const postBigCommerceOrdersData = async (requestJSON) => {
 
         console.log('Inserted data into TBLBIGCOMMERCEORDERSDATA:', orderData);
 
-        // Step 2: Fetch data from external URL
+        // Step 2: Fetch data from external URL using dynamic import
+        const { default: fetch } = await import('node-fetch');
         const response = await fetch(`https://api.bigcommerce.com/stores/cbuovjweig/v2/orders/${requestJSON.data.id}`, {
             headers: {
                 'X-Auth-Token': 'nuvn6vrgw85jfy5psftvf4av2cju05u',
@@ -237,7 +236,3 @@ const postBigCommerceOrdersData = async (requestJSON) => {
         throw error;
     }
 };
-
-
-
-
